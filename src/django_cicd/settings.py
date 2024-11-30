@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,10 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@&b+f3k)2%+!6%b%!9ou#6y#bxw!@+ap5%_vi^(lwalu=w@6=s'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = str(os.getenv('DEBUG')) == '1'
 
 ALLOWED_HOSTS = []
 
@@ -80,6 +80,32 @@ DATABASES = {
     }
 }
 
+DB_USERNAME=os.getenv('MYSQL_USER')
+DB_PASSWORD=os.getenv('MYSQL_PASSWORD')
+DB_DATABASE=os.getenv('MYSQL_DB')
+DB_HOST=os.getenv('MYSQL_HOST')
+DB_PORT=os.getenv('MYSQL_PORT')
+DB_IS_AVAILABLE=all([
+    DB_USERNAME, 
+    DB_PASSWORD,
+    DB_DATABASE, 
+    DB_HOST, 
+    DB_PORT
+])
+
+MYSQL_READY=os.getenv('MYSQL_READY') == "1"
+
+if MYSQL_READY and DB_IS_AVAILABLE:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': DB_DATABASE,
+            'USER': DB_USERNAME,
+            'PASSWORD': DB_PASSWORD,
+            'HOST': DB_HOST,
+            'PORT': DB_PORT,
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
