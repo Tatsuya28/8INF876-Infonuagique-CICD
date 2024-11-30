@@ -20,10 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = str(os.getenv('DEBUG')) == '1'
+DEBUG = str(os.environ.get('DEBUG')) == '1'
 
 ALLOWED_HOSTS = []
 
@@ -80,11 +80,11 @@ DATABASES = {
     }
 }
 
-DB_USERNAME=os.getenv('MYSQL_USER')
-DB_PASSWORD=os.getenv('MYSQL_PASSWORD')
-DB_DATABASE=os.getenv('MYSQL_DB')
-DB_HOST=os.getenv('MYSQL_HOST')
-DB_PORT=os.getenv('MYSQL_PORT')
+DB_USERNAME = os.environ.get('MYSQL_USER')
+DB_PASSWORD = os.environ.get('MYSQL_PASSWORD')
+DB_DATABASE = os.environ.get('MYSQL_DB')
+DB_HOST = os.environ.get('MYSQL_HOST')
+DB_PORT = os.environ.get('MYSQL_PORT')
 DB_IS_AVAILABLE=all([
     DB_USERNAME, 
     DB_PASSWORD,
@@ -93,7 +93,7 @@ DB_IS_AVAILABLE=all([
     DB_PORT
 ])
 
-MYSQL_READY=os.getenv('MYSQL_READY') == "1"
+MYSQL_READY = os.environ.get('MYSQL_READY') == "1"
 
 if MYSQL_READY and DB_IS_AVAILABLE:
     DATABASES = {
