@@ -6,5 +6,8 @@ WORKDIR /app
 
 RUN python3 -m venv /opt/venv
 
-RUN pip install --upgrade pip
-RUN /opt/venv/bin/pip install -r requirements.txt
+RUN /opt/venv/bin/pip install --upgrade pip && \
+    /opt/venv/bin/pip install -r requirements.txt && \
+    chmode +x /entrypoint.sh
+
+CMD [ "/app/entrypoint.sh" ]
