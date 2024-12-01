@@ -85,7 +85,7 @@ DB_PASSWORD = os.environ.get('MYSQL_PASSWORD')
 DB_DATABASE = os.environ.get('MYSQL_DB')
 DB_HOST = os.environ.get('MYSQL_HOST')
 DB_PORT = os.environ.get('MYSQL_PORT')
-DB_IS_AVAILABLE=all([
+DB_IS_AVAILABLE = all([
     DB_USERNAME, 
     DB_PASSWORD,
     DB_DATABASE, 
@@ -93,9 +93,7 @@ DB_IS_AVAILABLE=all([
     DB_PORT
 ])
 
-MYSQL_READY = os.environ.get('MYSQL_READY') == "1"
-
-if MYSQL_READY and DB_IS_AVAILABLE:
+if DB_IS_AVAILABLE:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
