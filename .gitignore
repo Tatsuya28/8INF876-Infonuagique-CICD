@@ -1,4 +1,5 @@
 src/.env
+src/.env.prod
 Ecrits/
 .kube/
 
