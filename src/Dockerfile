@@ -1,11 +1,12 @@
 FROM python:3.13-slim
 
 # Mettre à jour les paquets et installer les dépendances nécessaires
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends\
     build-essential \
     pkg-config \
     default-libmysqlclient-dev \
     netcat-openbsd \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 COPY . /app
