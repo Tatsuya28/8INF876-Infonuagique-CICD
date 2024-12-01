@@ -1,0 +1,43 @@
+services:
+  mysql_db:
+    image: mysql
+    restart: always
+    command: --explicit_defaults_for_timestamp # --port=3306 
+    env_file:
+      - src/.env
+    expose:
+      - 3306
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql/
+      - ./src/init.sql:/docker-entrypoint-initdb.d/init.sql
+  
+  src:
+    depends_on:
+      - mysql_db
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    image: django-cicd
+    environment:
+      - PORT=8000
+    env_file:
+      - src/.env
+    ports:
+      - "8000:8000"
+    command: sh -c "chmod +x /app/migrate.sh && sh /app/migrate.sh && sh /app/entrypoint.sh"
+  
+
+  redis:
+    image: redis
+    restart: always
+    expose:
+      - 6380
+    volumes:
+      - redis_data:/data
+    
+
+volumes:
+  mysql_data:
+  redis_data:
