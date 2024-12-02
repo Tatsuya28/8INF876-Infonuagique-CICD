@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-cicd-src-deployment
+  labels:
+    app: django-cicd-src-deployment
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: django-cicd-src-deployment
+  template:
+    metadata:
+      labels:
+        app: django-cicd-src-deployment
+    spec:
+      containers:
+      - name: django-cicd-src
+        image: registry.digitalocean.com/uqac-8inf876/django-cicd-src:latest
+        envFrom:
+        - secretRef:
+            name: django-cicd-k8s-src-prod-env
+        env:
+        - name: PORT
+          value: "8000"
+        ports:
+        - containerPort: 8000
+      imagePullSecrets:
+      - name: uqac-8inf876
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-cicd-src-service
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 8000
+  selector:
+    app: django-cicd-src-deployment
