@@ -1,16 +1,16 @@
-name: Django CI
+name: Django CI & MySQL Test
 
 on:
   workflow_call:
   workflow_dispatch:
   
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  # push:
+  #   branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
 
 jobs:
-  build:
+  django_mysql_test:
 
     runs-on: ubuntu-latest
 
