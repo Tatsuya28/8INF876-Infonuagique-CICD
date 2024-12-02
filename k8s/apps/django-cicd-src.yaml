@@ -18,6 +18,7 @@ spec:
       containers:
       - name: django-cicd-src
         image: registry.digitalocean.com/uqac-8inf876/django-cicd-src:latest
+        imagePullPolicy: Always
         envFrom:
         - secretRef:
             name: django-cicd-k8s-src-prod-env
