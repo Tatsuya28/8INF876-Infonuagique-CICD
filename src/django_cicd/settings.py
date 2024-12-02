@@ -25,7 +25,11 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = str(os.environ.get('DEBUG')) == '1'
 
+ENV_ALLOWED_HOSTS = os.environ.get('ENV_ALLOWED_HOSTS')
 ALLOWED_HOSTS = []
+if ENV_ALLOWED_HOSTS:
+    ALLOWED_HOSTS = [ ENV_ALLOWED_HOSTS ]
+
 
 
 # Application definition
@@ -92,6 +96,7 @@ DB_IS_AVAILABLE = all([
     DB_HOST, 
     DB_PORT
 ])
+DB_IGNORE_SSL = os.environ.get('MYSQL_IGNORE_SSL') == "true"
 
 if DB_IS_AVAILABLE:
     DATABASES = {
@@ -104,6 +109,13 @@ if DB_IS_AVAILABLE:
             'PORT': DB_PORT,
         }
     }
+
+    if not DB_IGNORE_SSL:
+        DATABASES['default']['OPTIONS'] = {
+            'ssl': {
+                'ca': '/etc/ssl/certs/ca-certificate.crt',
+            }
+        }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
