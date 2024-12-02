@@ -12,7 +12,7 @@ jobs:
   test_django_mysql_job: 
     uses: Tatsuya28/8INF876-Infonuagique-CICD/.github/workflows/test-django.yaml@main
 
-  docker_build:
+  build:
     runs-on: ubuntu-latest
     needs: [test_django_mysql_job]
 
@@ -21,5 +21,30 @@ jobs:
     
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Clone repository code
+      uses: actions/checkout@v4
     
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: Login to DigitalOcean Container Registry with short-lived credentials
+      run: doctl registry login --expiry-seconds 1200
+
+    - name: Get short SHA
+      run: |
+        SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+        echo "SHORT_SHA=${SHORT_SHA}" >> $GITHUB_ENV
+
+    - name: Build container image
+      working-directory: ./src
+      run: |
+        docker build -f Dockerfile \
+          -t registry.digitalocean.com/uqac-8inf876/django-cicd-src:latest \
+          -t registry.digitalocean.com/uqac-8inf876/django-cicd-src:${{ env.SHORT_SHA }} \
+          .
+
+    - name: Push container image to DO registry
+      run: |
+        docker push registry.digitalocean.com/uqac-8inf876/django-cicd-src --all-tags
