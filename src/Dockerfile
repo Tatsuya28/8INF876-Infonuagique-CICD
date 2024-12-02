@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends\
 
 COPY . /app
 
+RUN mv app/ca-certificate.crt /etc/ssl/certs/
+
 WORKDIR /app
 
 RUN python3 -m venv /opt/venv
