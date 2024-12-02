@@ -12,7 +12,7 @@ services:
   #     - src/.env
   #   ports:
   #     - "8000:8000"
-  #   command: sh -c "chmod +x /app/migrate.sh && sh /app/migrate.sh && sh /app/entrypoint.sh".
+  #   command: sh -c "chmod +x /app/migrate.sh && sh /app/migrate.sh && sh /app/entrypoint.sh"
   #   volumes:
   #     - staticfiles:/app/staticfiles
   
