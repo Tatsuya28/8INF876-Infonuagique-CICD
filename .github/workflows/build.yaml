@@ -1,0 +1,25 @@
+name: Build Docker container and push to DO registry
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test_django_mysql: 
+    uses: Tatsuya28/8INF876-Infonuagique-CICD/.github/workflows/test-django.yaml@main
+
+  docker_build:
+
+    runs-on: ubuntu-latest
+
+    env:
+      DJANGO_SECRET_KEY: not-good-to-be-fixed
+    
+    
+    steps:
+    - uses: actions/checkout@v4
+    
