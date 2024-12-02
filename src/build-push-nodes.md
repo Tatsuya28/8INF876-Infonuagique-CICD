@@ -9,7 +9,7 @@ docker login registry.digitalocean.com
 ## Build your container image locally
 
 ```bash
-docker build -tregistry.digitalocean.com/uqac-8inf876/django-cicd-src:latest -f Dockerfile .
+docker build -t registry.digitalocean.com/uqac-8inf876/django-cicd-src:latest -f Dockerfile .
 ```
 
 ## Push your container image
