@@ -54,6 +54,28 @@ jobs:
       run: |
         doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.CLUSTER_NAME }}
 
+    - name: Update deployment secrets
+      run: |
+        cat << EOF >> src/.env.prod
+        DEBUG=1
+        DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }}
+        DJANGO_SUPERUSER_PASSWORD=${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
+        DJANGO_SUPERUSER_EMAIL=${{ secrets.DJANGO_SUPERUSER_EMAIL }}
+        DJANGO_SECRET_KEY=${{ env.DJANGO_SECRET_KEY }}
+
+        ENV_ALLOWED_HOSTS=${{ secrets.ENV_ALLOWED_HOSTS }}
+
+        MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+        MYSQL_USER=${{ secrets.MYSQL_USER }}
+        MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+        MYSQL_HOST=${{ secrets.MYSQL_HOST }}
+        MYSQL_PORT=${{ secrets.MYSQL_PORT }}
+        MYSQL_DB=${{ secrets.MYSQL_DB }}
+        EOF
+
+        kubectl delete secret django-cicd-k8s-src-prod-env
+        kubectl create secret generic django-cicd-k8s-src-prod-env --from-env-file=src/.env.prod
+
     - name: Update Kubernetes deployment with new image
       run: |
         kubectl set image deployment/django-cicd-src-deployment \
