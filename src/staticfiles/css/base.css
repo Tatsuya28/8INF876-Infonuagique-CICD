@@ -1,0 +1,82 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f6f8;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: #3f51b5;
+    color: #fff;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    min-width: 50%;
+    overflow: hidden;
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+header nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+header nav ul li a:hover {
+    color: #a4b1e6;
+}
+
+header h1 {
+    margin-top: 1rem;
+    font-size: 1.8rem;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;;
+    width: 100%;
+    margin-top: auto;
+}
+
+/* Messages */
+.messages {
+    list-style: none;
+    margin-bottom: 1rem;
+}
+
+.messages li {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.messages .success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+
+.messages .error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
