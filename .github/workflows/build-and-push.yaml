@@ -26,9 +26,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: [ test_django_mysql_job ]
-
-    # outputs:
-    #   SHORT_SHA: ${{ steps.get-short-sha.outputs.SHORT_SHA }}
     
     steps:
     - name: Clone repository code
@@ -47,7 +44,6 @@ jobs:
       run: |
         SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
         echo "SHORT_SHA=${SHORT_SHA}" >> $GITHUB_ENV
-      # echo "SHORT_SHA=${SHORT_SHA}" >> $GITHUB_OUTPUT
 
     - name: Build container image
       working-directory: ${{ env.SRC_DIR }}
@@ -56,41 +52,7 @@ jobs:
           -t ${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:latest \
           -t ${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ env.SHORT_SHA }} \
           .
-
-  #   - name: Save Docker image as an artifact
-  #     run: |
-  #       docker save ${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:latest | gzip > image.tar.gz
-
-  #   - name: Upload artifact
-  #     uses: actions/upload-artifact@v4
-  #     with:
-  #       name: docker-image
-  #       path: image.tar.gz
-
-  # push:
-  #   runs-on: ubuntu-latest
-  #   needs: [ build ]
-    
-  #   steps:
-  #   - name: Clone repository code
-  #     uses: actions/checkout@v4
-
-  #   - name: Download artifact
-  #     uses: actions/download-artifact@v4
-  #     with:
-  #       name: docker-image
-    
-  #   - name: Load Docker image
-  #     run: gunzip < image.tar.gz | docker load
-
-  #   - name: Install doctl
-  #     uses: digitalocean/action-doctl@v2
-  #     with:
-  #       token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-    
-  #   - name: Login to DigitalOcean Container Registry with short-lived credentials
-  #     run: doctl registry login --expiry-seconds 600
-    
+  
     - name: Push container image to DO registry
       run: |
         docker push ${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }} --all-tags
@@ -125,7 +87,6 @@ jobs:
       run: |
         kubectl set image deployment/${{ env.DEPLOYMENT_NAME }} \
           django-cicd-src=${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ env.SHORT_SHA }}
-      # ${{ needs.build.outputs.SHORT_SHA }}
 
     - name: Wait for deployment rollout to finish
       run: |
