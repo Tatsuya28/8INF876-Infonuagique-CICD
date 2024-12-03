@@ -18,6 +18,7 @@ jobs:
 
     env:
       DJANGO_SECRET_KEY: not-good-to-be-fixed
+      CLUSTER_NAME: uqac-8inf876
     
     
     steps:
@@ -48,3 +49,21 @@ jobs:
     - name: Push container image to DO registry
       run: |
         docker push registry.digitalocean.com/uqac-8inf876/django-cicd-src --all-tags
+
+    - name: Set up kubectl with DigitalOcean Kubernetes cluster config file with short-lived credentials
+      run: |
+        doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.CLUSTER_NAME }}
+
+    - name: Update Kubernetes deployment with new image
+      run: |
+        kubectl set image deployment/django-cicd-src-deployment \
+          django-cicd-src=registry.digitalocean.com/uqac-8inf876/django-cicd-src:${{ env.SHORT_SHA }}
+
+    - name: Wait for deployment rollout to finish
+      run: |
+        kubectl rollout status deployment/django-cicd-src-deployment 
+
+    - name: Migrate database command
+      run: |
+        export SINGLE_POD_NAME=$(kubectl get pods -o jsonpath="{.items[0].metadata.name}")
+        kubectl exec $SINGLE_POD_NAME -- bash /app/migrate.sh
