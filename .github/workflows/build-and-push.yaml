@@ -124,7 +124,7 @@ jobs:
     - name: Update Kubernetes deployment with new image
       run: |
         kubectl set image deployment/${{ env.DEPLOYMENT_NAME }} \
-          django-cicd-src=${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}: ${{ env.SHORT_SHA }}
+          django-cicd-src=${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ env.SHORT_SHA }}
       # ${{ needs.build.outputs.SHORT_SHA }}
 
     - name: Wait for deployment rollout to finish
