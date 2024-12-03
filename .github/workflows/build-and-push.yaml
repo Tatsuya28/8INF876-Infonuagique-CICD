@@ -79,7 +79,7 @@ jobs:
     
     - name: Load Docker image
       run: gunzip < image.tar.gz | docker load
-      
+
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
       with:
@@ -116,7 +116,7 @@ jobs:
         EOF
 
         kubectl delete secret ${{ env.SECRET_NAME }}
-        kubectl create secret generic ${{ env.SECRET_NAME }} --from-env-file=${{ env.SRC_DIR }}/${{ env.PROD_ENV }}
+        kubectl create secret generic ${{ env.SECRET_NAME }} --from-env-file=./${{ env.SRC_DIR }}/${{ env.PROD_ENV }}
 
     - name: Update Kubernetes deployment with new image
       run: |
