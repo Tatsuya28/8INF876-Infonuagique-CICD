@@ -57,11 +57,29 @@ jobs:
           -t ${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ env.SHORT_SHA }} \
           .
 
+    - name: Save Docker image as an artifact
+      run: |
+        docker save ${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:latest | gzip > image.tar.gz
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: docker-image
+        path: image.tar.gz
+
   push:
     runs-on: ubuntu-latest
     needs: [ build ]
     
     steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: docker-image
+    
+    - name: Load Docker image
+      run: gunzip < image.tar.gz | docker load
+      
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
       with:
