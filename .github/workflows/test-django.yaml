@@ -20,7 +20,7 @@ jobs:
 
     env:
       DJANGO_SECRET_KEY: not-good-to-be-fixed
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DB: django_cicd_db
       MYSQL_USER: myuser
       MYSQL_PASSWORD: mypassword

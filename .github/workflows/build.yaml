@@ -14,11 +14,18 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: [test_django_mysql_job]
+    needs: [ test_django_mysql_job ]
 
     env:
-      DJANGO_SECRET_KEY: not-good-to-be-fixed
       CLUSTER_NAME: k8s-django-cicd
+      REGISTRY_DOMAIN: registry.digitalocean.com
+      REGISTRY_NAME: uqac-8inf876
+      IMAGE_NAME: django-cicd-src
+      SECRET_NAME: django-cicd-k8s-src-prod-env
+      DEPLOYMENT_NAME: django-cicd-src-deployment
+      SRC_DIR: src
+      DOCKERFILE: Dockerfile
+      PROD_ENV: .env.prod
     
     
     steps:
@@ -39,16 +46,16 @@ jobs:
         echo "SHORT_SHA=${SHORT_SHA}" >> $GITHUB_ENV
 
     - name: Build container image
-      working-directory: ./src
+      working-directory: ${{ env.SRC_DIR }}
       run: |
-        docker build -f Dockerfile \
-          -t registry.digitalocean.com/uqac-8inf876/django-cicd-src:latest \
-          -t registry.digitalocean.com/uqac-8inf876/django-cicd-src:${{ env.SHORT_SHA }} \
+        docker build -f ${{ env.DOCKERFILE }} \
+          -t ${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:latest \
+          -t ${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ env.SHORT_SHA }} \
           .
 
     - name: Push container image to DO registry
       run: |
-        docker push registry.digitalocean.com/uqac-8inf876/django-cicd-src --all-tags
+        docker push ${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }} --all-tags
 
     - name: Set up kubectl with DigitalOcean Kubernetes cluster config file with short-lived credentials
       run: |
@@ -56,12 +63,12 @@ jobs:
 
     - name: Update deployment secrets
       run: |
-        cat << EOF >> src/.env.prod
+        cat << EOF >> ${{ env.SRC_DIR }}/${{ env.PROD_ENV }}
         DEBUG=1
         DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }}
         DJANGO_SUPERUSER_PASSWORD=${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
         DJANGO_SUPERUSER_EMAIL=${{ secrets.DJANGO_SUPERUSER_EMAIL }}
-        DJANGO_SECRET_KEY=${{ env.DJANGO_SECRET_KEY }}
+        DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
 
         ENV_ALLOWED_HOSTS=${{ secrets.ENV_ALLOWED_HOSTS }}
 
@@ -73,17 +80,17 @@ jobs:
         MYSQL_DB=${{ secrets.MYSQL_DB }}
         EOF
 
-        kubectl delete secret django-cicd-k8s-src-prod-env
-        kubectl create secret generic django-cicd-k8s-src-prod-env --from-env-file=src/.env.prod
+        kubectl delete secret ${{ env.SECRET_NAME }}
+        kubectl create secret generic ${{ env.SECRET_NAME }} --from-env-file=src/.env.prod
 
     - name: Update Kubernetes deployment with new image
       run: |
-        kubectl set image deployment/django-cicd-src-deployment \
-          django-cicd-src=registry.digitalocean.com/uqac-8inf876/django-cicd-src:${{ env.SHORT_SHA }}
+        kubectl set image deployment/${{ env.DEPLOYMENT_NAME }} \
+          django-cicd-src=${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ env.SHORT_SHA }}
 
     - name: Wait for deployment rollout to finish
       run: |
-        kubectl rollout status deployment/django-cicd-src-deployment 
+        kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }} 
 
     - name: Migrate database command
       run: |
