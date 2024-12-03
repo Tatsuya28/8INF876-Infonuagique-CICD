@@ -6,3 +6,4 @@ mysql
 pymysql
 django-storages
 boto3
+bcrypt
