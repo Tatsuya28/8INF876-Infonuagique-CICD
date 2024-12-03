@@ -1,0 +1,33 @@
+name: Rollout Django Deployment
+
+on:
+  # workflow_call:
+  workflow_dispatch:
+
+env:
+  CLUSTER_NAME: k8s-django-cicd
+  DEPLOYMENT_NAME: django-cicd-src-deployment
+
+jobs:
+  rollout:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Clone repository code
+      uses: actions/checkout@v4
+    
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: Login to DigitalOcean Container Registry with short-lived credentials
+      run: doctl registry login --expiry-seconds 1200
+
+    - name: Set up kubectl with DigitalOcean Kubernetes cluster config file with short-lived credentials
+      run: |
+        doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.CLUSTER_NAME }}
+
+    - name: Run kubectl rollout on deployment
+      run: |
+        kubectl rollout restart deployment/${{ env.DEPLOYMENT_NAME }} 
