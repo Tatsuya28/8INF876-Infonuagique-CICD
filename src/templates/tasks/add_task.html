@@ -1,0 +1,21 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}Ajouter une tâche{% endblock %}
+
+{% block content %}
+
+    <h2>Ajouter une Tâche</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="title">Titre:</label>
+        <input type="text" id="title" name="title"><br><br>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description"></textarea><br><br>
+
+        <label for="due_date">Date d'échéance:</label>
+        <input type="datetime-local" id="due_date" name="due_date"><br><br>
+
+        <button type="submit">Ajouter la tâche</button>
+    </form>
+{% endblock %}

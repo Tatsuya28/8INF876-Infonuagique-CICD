@@ -1,0 +1,54 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TasksManager{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                {% if "user_id" in request.session %}
+                <!-- Si l'utilisateur est connecté, afficher ces liens -->
+                    <li><a href="{% url 'task_list' %}">Mes tâches</a></li>
+                    <li><a href="{% url 'add_task' %}">Ajouter une tâche</a></li>
+                    <li><a href="{% url 'logout' %}">Déconnexion</a></li>
+                {% else %}
+                    <!-- Si l'utilisateur n'est pas connecté, afficher ces liens -->
+                    <li><a href="{% url 'login' %}">Se connecter</a></li>
+                    <li><a href="{% url 'register' %}">S'inscrire</a></li>
+                {% endif %}
+            </ul>
+
+        </nav>
+    {% if "user_id" not in request.session %}
+        <h1>Bienvenue sur l'application de gestion des tâches</h1>
+    {% endif %}
+    </header>
+
+    <!-- Section pour afficher les messages de succès ou d'erreur -->
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <!-- Bloc pour le contenu spécifique de chaque page -->
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; 2024 TasksManager</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}Modifier la tâche{% endblock %}
+
+{% block content %}
+    <h2>Modifier la tâche</h2>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="task_id" value="{{ task.id }}">
+
+        <label for="title">Titre:</label>
+        <input type="text" name="title" id="title" value="{{ task.title }}" required><br><br>
+
+        <label for="description">Description:</label>
+        <textarea name="description" id="description">{{ task.description }}</textarea><br><br>
+
+        <label for="due_date">Date d'échéance:</label>
+        <input type="datetime-local" name="due_date" id="due_date" value="{{ task.due_date|date:"Y-m-d\TH:i" }}"><br><br>
+
+        <label for="completed">Fait:</label>
+        <input type="checkbox" name="completed" id="completed" {% if task.completed %}checked{% endif %}><br><br>
+
+        <button type="submit">Mettre à jour</button>
+    </form>
+{% endblock %}

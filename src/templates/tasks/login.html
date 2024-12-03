@@ -1,0 +1,21 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <h2>Se connecter</h2>
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="password">Mot de passe:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <button type="submit">Se connecter</button>
+    </form>
+    <div>
+        <p>Si vous n'avez pas de compte, <a href="{% url 'register' %}">cliquez ici</a></p>
+    </div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{##}
+{#    <ul>#}
+{#        {% for task in tasks %}#}
+{#            <li>{{ task.title }} - {% if task.completed %}Réalisée{% else %}En cours{% endif %}</li>#}
+{##}
+{#            <a href="{% url 'edit_task' %}?task_id={{ task.id }}">Edit</a>#}
+{##}
+{#            <form action="{% url 'delete_task' %}" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?');">#}
+{#                {% csrf_token %}#}
+{#                <input type="hidden" name="task_id" value="{{ task.id }}">#}
+{#                <button type="submit">Supprimer</button>#}
+{#            </form>#}
+{#        {% endfor %}#}
+{#    </ul>#}
+
+{% extends "tasks/base.html" %}
+
+
+{% block title %}Liste des tâches{% endblock %}
+
+{% block content %}
+
+    <div class="task-list">
+        <h2>{{ user.name }}, voici tes tâches à faire :</h2>
+        <!-- Liste des tâches -->
+
+        <ul>
+            {% for task in uncompleted_tasks %}
+                <li>
+                    <div class="task">
+                        <div class="info">
+                            <h3>{{ task.title }}</h3>
+                            <p>{{ task.description }}</p>
+                            <p>Date d'échéance : {{ task.due_date }}</p>
+                        </div>
+
+                        <div class="actions">
+                            <a href="{% url 'edit_task' %}?task_id={{ task.id }}">Editer</a>
+                            <form action="{% url 'delete_task' %}" method="post"
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="task_id" value="{{ task.id }}">
+                                <button type="submit">Suppr.</button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="task-list">
+        <a class="add-task" href="{% url 'add_task' %}">Ajouter une tâche</a>
+    </div>
+
+    {% if completed_tasks %}
+        <div class="task-list">
+            <h2>{{ user.name }}, voici tes tâches réalisées :</h2>
+            <!-- Liste des tâches -->
+
+            <ul>
+                {% for task in completed_tasks %}
+                    <li>
+                        <div class="task">
+                            <div class="info">
+                                <h3>{{ task.title }}</h3>
+                                <p>{{ task.description }}</p>
+                                <p>Date d'échéance : {{ task.due_date }}</p>
+                            </div>
+
+                            <div class="actions">
+                                <form action="{% url 'delete_task' %}" method="post"
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?');">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="task_id" value="{{ task.id }}">
+                                    <button type="submit">Suppr.</button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endblock %}
