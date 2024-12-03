@@ -40,7 +40,7 @@ jobs:
     - name: Login to DigitalOcean Container Registry with short-lived credentials
       run: doctl registry login --expiry-seconds 1200
 
-    - name: Get short SHA
+    - name: Get short SHA and save it for pushing image
       run: |
         SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
         echo "SHORT_SHA=${SHORT_SHA}" >> $GITHUB_ENV
@@ -53,6 +53,31 @@ jobs:
           -t ${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:${{ env.SHORT_SHA }} \
           .
 
+  push:
+    runs-on: ubuntu-latest
+    needs: [ build ]
+
+    env:
+      CLUSTER_NAME: ${{ needs.build.env.CLUSTER_NAME }}
+      REGISTRY_DOMAIN: ${{ needs.build.env.REGISTRY_DOMAIN }}
+      REGISTRY_NAME: ${{ needs.build.env.REGISTRY_NAME }}
+      IMAGE_NAME: ${{ needs.build.env.IMAGE_NAME }}
+      SECRET_NAME: ${{ needs.build.env.SECRET_NAME }}
+      DEPLOYMENT_NAME: ${{ needs.build.env.DEPLOYMENT_NAME }}
+      SRC_DIR: ${{ needs.build.env.SRC_DIR }}
+      DOCKERFILE: ${{ needs.build.env.DOCKERFILE }}
+      PROD_ENV: ${{ needs.build.env.PROD_ENV }}
+      SHORT_SHA: ${{ needs.build.env.SHORT_SHA }}
+    
+    steps:
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+    
+    - name: Login to DigitalOcean Container Registry with short-lived credentials
+      run: doctl registry login --expiry-seconds 600
+    
     - name: Push container image to DO registry
       run: |
         docker push ${{ env.REGISTRY_DOMAIN }}/${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }} --all-tags
@@ -81,7 +106,7 @@ jobs:
         EOF
 
         kubectl delete secret ${{ env.SECRET_NAME }}
-        kubectl create secret generic ${{ env.SECRET_NAME }} --from-env-file=src/.env.prod
+        kubectl create secret generic ${{ env.SECRET_NAME }} --from-env-file=${{ env.SRC_DIR }}/${{ env.PROD_ENV }}
 
     - name: Update Kubernetes deployment with new image
       run: |
