@@ -15,7 +15,7 @@
         <textarea name="description" id="description">{{ task.description }}</textarea><br><br>
 
         <label for="due_date">Date d'échéance:</label>
-        <input type="datetime-local" name="due_date" id="due_date" value="{{ task.due_date|date:"Y-m-d\TH:i" }}"><br><br>
+        <input type="datetime-local" name="due_date" id="due_date" value="{{ task.due_date|date:"Y-m-d\TH:i" }}" required><br><br>
 
         <label for="completed">Fait:</label>
         <input type="checkbox" name="completed" id="completed" {% if task.completed %}checked{% endif %}><br><br>

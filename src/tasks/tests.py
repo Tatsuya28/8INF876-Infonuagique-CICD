@@ -89,3 +89,159 @@ class BaseSetUpAfterLogin(TestCase):
     self.assertRedirects(response, reverse('task_list'))
 
 
+class Add_task_test(BaseSetUpAfterLogin):
+
+    def test_add_task_page_available(self):
+        response = self.client.get(reverse('add_task'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_create_task(self):
+       
+        user = User.objects.get(email='test@gmail.com')
+        now = timezone.now()
+
+
+        task_data = {
+            'title': 'test_task' ,
+            'description':'test_description',
+            'due_date':now,
+            'user':user
+        }
+
+        task= Task.objects.create(**task_data)
+        self.assertTrue(Task.objects.filter(title='test_task').exists)
+
+        main_page = self.client.get(reverse('task_list'))
+        self.assertContains(main_page, 'test_task')
+
+        task.delete()
+        main_page = self.client.get(reverse('task_list'))
+        self.assertNotContains(main_page, 'test_task')
+    
+
+    def test_create_task_unsuccesful(self):
+
+        usertest = User.objects.get(email='test@gmail.com')
+        now = timezone.now()
+
+
+        task_data = {
+            'title': None ,
+            'description':None,
+            'due_date': None,
+            'user':usertest
+        }
+
+        
+        with self.assertRaises(IntegrityError):
+           task= Task.objects.create(**task_data)
+        
+
+class BaseSetUpCreateTask(BaseSetUpAfterLogin):
+
+    def setUp(self):
+
+        super().setUp()
+        user = User.objects.get(email='test@gmail.com')
+        now = timezone.now()
+
+
+        task_data = {
+            'title': 'test_task' ,
+            'description':'test_description',
+            'due_date':now,
+            'user':user
+        }
+
+        task= Task.objects.create(**task_data)
+
+
+class Edit_task_test(BaseSetUpCreateTask):
+
+
+    def test_access_edit_task(self):
+
+        task_created = Task.objects.get(title='test_task')
+        id_task = task_created.pk
+
+        url_with_params = reverse('edit_task') + '?' + urlencode({'task_id': id_task})
+
+        response = self.client.get(url_with_params)
+
+        self.assertEqual(response.status_code, 200)
+
+
+        self.assertContains(response, 'test_task')
+        self.assertContains(response, 'test_description')
+
+    def test_finish_task(self):
+        # Récupérer et marquer la tâche comme complétée
+        task_created = Task.objects.get(title='test_task')
+        task_created.completed = True
+        task_created.save()
+
+        # Charger la page de la liste des tâches
+        response = self.client.get(reverse('task_list'))
+
+        # Vérifier que le contexte contient les bonnes listes
+        self.assertIn('completed_tasks', response.context)
+        self.assertIn('uncompleted_tasks', response.context)
+
+        # Vérifier que la tâche complétée est dans la liste correcte
+        completed_tasks = response.context['completed_tasks']
+        uncompleted_tasks = response.context['uncompleted_tasks']
+
+        self.assertIn(task_created, completed_tasks)
+        self.assertNotIn(task_created, uncompleted_tasks)
+
+
+
+
+    def test_edit_task(self):
+
+        task_modified = Task.objects.get(title='test_task')
+        task_modified.title = 'test_edit_title'
+        task_modified.description= 'test_new_description'
+        task_modified.due_date= timezone.now()
+
+        task_modified.save()
+
+        # Charger la page de la liste des tâches
+        response = self.client.get(reverse('task_list'))
+
+        # Vérifier que le contexte contient les bonnes listes
+        self.assertIn('completed_tasks', response.context)
+        self.assertIn('uncompleted_tasks', response.context)
+
+        # Vérifier que la tâche complétée est dans la liste correcte
+        completed_tasks = response.context['completed_tasks']
+        uncompleted_tasks = response.context['uncompleted_tasks']
+
+        self.assertNotIn(task_modified, completed_tasks)
+        self.assertIn(task_modified, uncompleted_tasks)
+
+
+    def test_bad_edit_task(self):
+
+        bad_task_modified = Task.objects.get(title='test_task')
+
+        bad_task_modified.title= None
+        bad_task_modified.due_date= None
+        with self.assertRaises(IntegrityError):
+            bad_task_modified.save()
+
+
+class Logout_test(BaseSetUpAfterLogin):
+
+    def test_logout(self):
+        session = self.client.session
+        self.assertIn('user_id', session)
+
+        response = self.client.get(reverse('logout'))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('login'))
+
+        session = self.client.session
+        self.assertNotIn('user_id', session)
+

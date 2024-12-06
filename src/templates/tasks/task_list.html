@@ -20,7 +20,7 @@
 
 {% block content %}
 
-    <div class="task-list">
+    <div class="task-list" id="notcompleted">
         <h2>{{ user.name }}, voici tes tâches à faire :</h2>
         <!-- Liste des tâches -->
 
@@ -49,12 +49,12 @@
         </ul>
     </div>
 
-    <div class="task-list">
+    <div class="task-list" >
         <a class="add-task" href="{% url 'add_task' %}">Ajouter une tâche</a>
     </div>
 
     {% if completed_tasks %}
-        <div class="task-list">
+        <div class="task-list" id="completed">
             <h2>{{ user.name }}, voici tes tâches réalisées :</h2>
             <!-- Liste des tâches -->
 
