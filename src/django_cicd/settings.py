@@ -109,6 +109,10 @@ if DB_IS_AVAILABLE:
             'PASSWORD': DB_PASSWORD,
             'HOST': DB_HOST,
             'PORT': DB_PORT,
+            'TEST':{
+                'NAME': 'test_django_cicd_db',
+
+            }
         }
     }
 
