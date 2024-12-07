@@ -63,7 +63,7 @@ jobs:
         pip install -r requirements.txt
     
     - name: Update Tests secrets
-      working-directory: ./src
+      # working-directory: ./src
       run: |
         cat << EOF >> src/.env
         DEBUG=0
