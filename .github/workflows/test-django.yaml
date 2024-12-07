@@ -7,7 +7,19 @@ on:
         required: true
         type: string
     secrets:
-      MY_SECRET: 
+      DJANGO_SUPERUSER_USERNAME:
+        required: true
+      DJANGO_SUPERUSER_PASSWORD:
+        required: true
+      DJANGO_SUPERUSER_EMAIL:
+        required: true
+      DJANGO_SECRET_KEY:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      ENV_ALLOWED_HOSTS:
         required: true
 
   workflow_dispatch:
