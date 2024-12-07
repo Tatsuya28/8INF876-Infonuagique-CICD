@@ -67,4 +67,4 @@ jobs:
         MYSQL_PORT: ${{ env.MYSQL_PORT }}
         MYSQL_IGNORE_SSL: "true"
       run: |
-        python manage.py test
+        python manage.py test --noinput
