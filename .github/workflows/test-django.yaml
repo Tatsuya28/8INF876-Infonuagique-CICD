@@ -40,7 +40,7 @@ jobs:
           --health-interval=10s 
           --health-timeout=5s 
           --health-retries=3
-          --ssl=0
+          --ssl-mode=DISABLED
 
     strategy:
       max-parallel: 4
