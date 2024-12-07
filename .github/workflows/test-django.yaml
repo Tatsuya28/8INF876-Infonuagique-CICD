@@ -26,6 +26,8 @@ jobs:
       MYSQL_PASSWORD: mypassword
       MYSQL_HOST: 127.0.0.1
       MYSQL_PORT: 3306
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     services:
       mysql_main:
@@ -66,5 +68,6 @@ jobs:
         MYSQL_HOST: ${{ env.MYSQL_HOST }}
         MYSQL_PORT: ${{ env.MYSQL_PORT }}
         MYSQL_IGNORE_SSL: "true"
+        
       run: |
         python manage.py test --noinput
