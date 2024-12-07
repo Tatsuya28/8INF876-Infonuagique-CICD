@@ -2,6 +2,14 @@ name: Django CI & MySQL Test
 
 on:
   workflow_call:
+    inputs:
+      ENVIRONMENT:
+        required: true
+        type: string
+    secrets:
+      MY_SECRET: 
+        required: true
+
   workflow_dispatch:
 
   # push:
@@ -17,7 +25,9 @@ jobs:
     defaults:
       run:
         working-directory: ./src
-
+    
+    environment:
+      name: ${{ inputs.ENVIRONMENT }}
     env:
       DJANGO_SECRET_KEY: not-good-to-be-fixed
       MYSQL_ROOT_PASSWORD: root

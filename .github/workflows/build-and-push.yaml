@@ -22,6 +22,17 @@ env:
 jobs:
   test_django_mysql_job: 
     uses: Tatsuya28/8INF876-Infonuagique-CICD/.github/workflows/test-django.yaml@main
+    with:
+      ENVIRONMENT: mytests
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      DJANGO_SUPERUSER_USERNAME: ${{ secrets.DJANGO_SUPERUSER_USERNAME }}
+      DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
+      DJANGO_SUPERUSER_EMAIL: ${{ secrets.DJANGO_SUPERUSER_EMAIL }}
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      ENV_ALLOWED_HOSTS: ${{ secrets.ENV_ALLOWED_HOSTS }}
+
 
   build_and_push:
     runs-on: ubuntu-latest
