@@ -56,9 +56,9 @@ jobs:
         image: mysql:8
         env:
           MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_PASSWORD }}
-          MYSQL_DATABASE: ${{ env.MYSQL_DB }}
-          MYSQL_USER: ${{ env.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
+          # MYSQL_DATABASE: ${{ env.MYSQL_DB }}
+          # MYSQL_USER: ${{ env.MYSQL_USER }}
+          # MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
         ports:
           - 3306:3306
         options: >-
@@ -73,7 +73,9 @@ jobs:
         python-version: [3.13] # can be a list of versions
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Clone repository code
+      uses: actions/checkout@v4
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
@@ -84,8 +86,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    - name: Update Tests secrets
-      # working-directory: ./src
+    - name: Initialize Tests secrets
       run: |
         cat << EOF >> .env
         DEBUG=0
@@ -106,7 +107,7 @@ jobs:
         MYSQL_PORT=${{ env.MYSQL_PORT }}
         MYSQL_DB=${{ env.MYSQL_DB }}
         EOF
-        cat .env
+        
     
     - name: Drop Test Database
       run: |
