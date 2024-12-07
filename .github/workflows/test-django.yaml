@@ -24,11 +24,6 @@ on:
 
   workflow_dispatch:
 
-  # push:
-  #   branches: [ "main" ]
-  # pull_request:
-  #   branches: [ "main" ]
-
 jobs:
   django_mysql_test:
 
@@ -107,11 +102,6 @@ jobs:
         MYSQL_PORT=${{ env.MYSQL_PORT }}
         MYSQL_DB=${{ env.MYSQL_DB }}
         EOF
-        
-    
-    # - name: Drop Test Database
-    #   run: |
-    #     mysql -h 127.0.0.1 -P 3306 -u root -proot -e "DROP DATABASE IF EXISTS ${{ env.MYSQL_DB }};"
 
     - name: Run Tests
       env:
