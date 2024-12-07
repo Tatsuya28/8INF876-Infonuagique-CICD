@@ -65,6 +65,8 @@ jobs:
     - name: Update Tests secrets
       # working-directory: ./src
       run: |
+        pwd
+        ls -la
         cat << EOF >> src/.env
         DEBUG=0
         DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }}
