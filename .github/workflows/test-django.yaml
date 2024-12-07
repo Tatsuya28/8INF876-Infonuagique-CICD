@@ -56,10 +56,16 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+        
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    
+    - name: Drop Test Database
+      run: |
+        mysql -h 127.0.0.1 -P 3306 -u root -proot -e "DROP DATABASE IF EXISTS ${{ env.MYSQL_DB }};"
+
     - name: Run Tests
       env:
         MYSQL_DB: ${{ env.MYSQL_DB }}
