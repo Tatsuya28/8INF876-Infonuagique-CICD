@@ -65,8 +65,6 @@ jobs:
     - name: Update Tests secrets
       # working-directory: ./src
       run: |
-        pwd
-        ls -la
         cat << EOF >> .env
         DEBUG=0
         DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }}
@@ -99,6 +97,7 @@ jobs:
         MYSQL_HOST: ${{ env.MYSQL_HOST }}
         MYSQL_PORT: ${{ env.MYSQL_PORT }}
         MYSQL_IGNORE_SSL: "true"
-        
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}        
       run: |
         python manage.py test --noinput
