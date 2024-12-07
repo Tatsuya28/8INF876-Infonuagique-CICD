@@ -31,7 +31,8 @@ jobs:
       DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
       DJANGO_SUPERUSER_EMAIL: ${{ secrets.DJANGO_SUPERUSER_EMAIL }}
       DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-      ENV_ALLOWED_HOSTS: ${{ secrets.ENV_ALLOWED_HOSTS }}
+      ENV_ALLOWED_HOSTS: ${{ secrets.ENV_ALLOWED_HOSTS }} 
+      #noqa to ignore the warning of the secrets
 
 
   build_and_push:
