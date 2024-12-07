@@ -84,6 +84,7 @@ jobs:
         MYSQL_PORT=${{ env.MYSQL_PORT }}
         MYSQL_DB=${{ env.MYSQL_DB }}
         EOF
+        cat .env
     
     - name: Drop Test Database
       run: |
