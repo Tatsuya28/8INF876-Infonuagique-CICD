@@ -109,9 +109,9 @@ jobs:
         EOF
         
     
-    - name: Drop Test Database
-      run: |
-        mysql -h 127.0.0.1 -P 3306 -u root -proot -e "DROP DATABASE IF EXISTS ${{ env.MYSQL_DB }};"
+    # - name: Drop Test Database
+    #   run: |
+    #     mysql -h 127.0.0.1 -P 3306 -u root -proot -e "DROP DATABASE IF EXISTS ${{ env.MYSQL_DB }};"
 
     - name: Run Tests
       env:
