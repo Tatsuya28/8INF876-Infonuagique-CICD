@@ -16,7 +16,6 @@ services:
   #   volumes:
   #     - staticfiles:/app/staticfiles
   
-  
   mysql_db:
     image: mysql
     restart: always
@@ -29,22 +28,9 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql/
-      - ./src/init.sql:/docker-entrypoint-initdb.d/init.sql
-
-  redis:
-    image: redis
-    restart: always
-    expose:
-      - 6380
-    ports:
-      - "6380:6380"
-    volumes:
-      - redis_data:/data
-    entrypoint: redis-server --appendonly yes --port 6380
-    
+      - ./src/init.sql:/docker-entrypoint-initdb.d/init.sql 
 
 volumes:
+  mysql_data:
   # staticfiles:
   #   external: true
-  mysql_data:
-  redis_data:
