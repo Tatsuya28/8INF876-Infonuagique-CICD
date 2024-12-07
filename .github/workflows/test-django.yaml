@@ -40,7 +40,6 @@ jobs:
           --health-interval=10s 
           --health-timeout=5s 
           --health-retries=3
-          --ssl-mode=DISABLED
 
     strategy:
       max-parallel: 4
@@ -64,5 +63,6 @@ jobs:
         MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
         MYSQL_HOST: ${{ env.MYSQL_HOST }}
         MYSQL_PORT: ${{ env.MYSQL_PORT }}
+        MYSQL_IGNORE_SSL: "true"
       run: |
         python manage.py test
